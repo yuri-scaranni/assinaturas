@@ -16,7 +16,7 @@ bandeira = ""
 # função para buscar imagens na pasta passada, retorna o caminho completo da imagem escolhida
 def LocalizarImagens():
     lista_de_hoteis = ['Sair', 'Pesquisar novamente']
-    # Insere na lista arquivos de formato "jpg", "jpeg" e "png"
+    # Insere na lista arquivos de formato "jpg", "jpeg" e "png".
     [lista_de_hoteis.append(file.upper()) for file in glob.glob('*') if file.endswith(('.jpeg', '.png', '.jpg'))]
     [print(f'[{index}] - {opcao}') for index, opcao in enumerate(lista_de_hoteis)]
 
