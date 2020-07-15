@@ -1,6 +1,7 @@
-import glob, os, sys, time
+import glob, os, time
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
+
 
 ###################################################################
 # Um projeto desenvolvido por Yuri Scaranni - Louvre Hotels Group #
@@ -10,14 +11,16 @@ from datetime import datetime
 def Hora():
     return str(datetime.now()).replace(':', '_').replace(' ', '-H-')[:-7]
 
+
 # Variável global para distinguir bandeira
 bandeira = ""
+
 
 # função para buscar imagens na pasta passada, retorna o caminho completo da imagem escolhida
 def LocalizarImagens():
     lista_de_hoteis = ['Sair', 'Pesquisar novamente']
-    # Insere na lista arquivos de formato "jpg", "jpeg" e "png".
-    [lista_de_hoteis.append(file.upper()) for file in glob.glob('*') if file.endswith(('.jpeg', '.png', '.jpg'))]
+    # Insere na lista arquivos de formato "jpg", "jpeg" e "png"
+    [lista_de_hoteis.append(file.upper()) for file in glob.glob('*') if file.endswith(('.jpeg', '.png', '.jpg', '.tiff'))]
     [print(f'[{index}] - {opcao}') for index, opcao in enumerate(lista_de_hoteis)]
 
     # Testa a opção, caso seja inválida retorna opções anteriores
@@ -36,110 +39,109 @@ def LocalizarImagens():
     return os.getcwd() + '\\' + lista_de_hoteis[op]
 
 
+class dado_imagem:
+    texto = str(None)
+    fonteNome = str(None)
+    cor = (int, int, int)
+    coordenada = ()
+
+    def __init__(self, texto, fonteNome, cor, coordenda):
+        self.texto = texto
+        self.fonteNome = fonteNome
+        self.cor = cor
+        self.coordenada = coordenda
+
+
 class bandeira_hoteis:
-    # Classe para hotéis bandeira Golden
-    def Golden(self, nome, func, funcIng, nomeHotel, ender, email, telefone):
-        # dados
+    nome = str(None)
+    func = str(None)
+    funcING = str(None)
+    nomeHotel = str(None)
+    email = str(None)
+    telefone = str(None)
+    ender = str(None)
+    cidade = str(None)
+    dados = []
+    tipo = None
+
+    def iniciar(self, nome, func, funcING, nomeHotel, email, telefone, ender, cidade):
         self.nome = nome
         self.func = func
-        self.funcing = funcIng
-        self.nomehotel = nomeHotel
+        self.funcING = funcING
+        self.nomeHotel = nomeHotel
         self.ender = ender
         self.email = email
-        self.tele = telefone
-        self.dados = [self.nome, self.func, self.funcing, self.nomehotel, self.ender, self.email, self.tele]
+        self.telefone = telefone
+        self.cidade = cidade
 
-        # formato geral do dado
-        self.FonteNome = ImageFont.truetype("DalaFloda-Roman", 18)  # 25
-        self.FonteFuncao = ImageFont.truetype("Metric-Regular", 12)  # 16
-        self.FonteFuncaoIngles = ImageFont.truetype("Metric-Light", 12)
-        self.FonteNomedoHotel = ImageFont.truetype("Metric-Bold", 12)
-        self.FonteEndereco = ImageFont.truetype("Metric-Regular", 12)
-        self.FonteEmail = ImageFont.truetype("Metric-Regular", 12)
-        self.FonteTelefone = ImageFont.truetype("Metric-Bold", 12)
-        self.fontes = [self.FonteNome, self.FonteFuncao, self.FonteFuncaoIngles, self.FonteNomedoHotel,
-                       self.FonteEndereco, self.FonteEmail, self.FonteTelefone]
+    def formatoFonte(self, nomeFonte, tamanhoFonte):
+        self.nomeFonte = nomeFonte
+        self.tamanhoFonte = tamanhoFonte
+        return ImageFont.truetype(f'{self.nomeFonte}', tamanhoFonte)
 
+    # Classe para hotéis bandeira Golden
+    # Golden(nome, func, funcIng, nomeHotel, ender, email, telefone)
+    def Golden(self, nome, func, funcING, nomeHotel, ender, cidade, email, telefone):
+        # dados
+        self.iniciar(nome, func, funcING, nomeHotel, email, telefone, ender, cidade)
         # formato RGB
         self.cor = (29, 54, 73)
-        # Tupla de coordenada X, Y de cada um dos atributos da classe
-        self.coordenada = [(25, 9), (25, 26), (25, 37), (25, 52), (25, 65), (25, 79), (25, 100)]
+        # formato geral do dado
+        self.dados.append(dado_imagem(self.nome, self.formatoFonte("DalaFloda-Roman", 15), self.cor, (40, 20)))
+        self.dados.append(dado_imagem(self.func, self.formatoFonte("Metric-Regular", 11), self.cor, (40, 34)))
+        self.dados.append(dado_imagem(self.funcING, self.formatoFonte("Metric-Light", 10), self.cor, (40, 43)))
+        self.dados.append(dado_imagem(self.nomeHotel, self.formatoFonte("Metric-Bold", 11), self.cor, (40, 60)))
+        self.dados.append(dado_imagem(self.ender, self.formatoFonte("Metric-Regular", 11), self.cor, (40, 70)))
+        self.dados.append(dado_imagem(self.cidade, self.formatoFonte("Metric-Regular", 11), self.cor, (40, 80)))
+        self.dados.append(dado_imagem(self.email, self.formatoFonte("Metric-Regular", 11), self.cor, (40, 95)))
+        self.dados.append(dado_imagem(self.telefone, self.formatoFonte("Metric-Bold", 10), self.cor, (40, 105)))
 
     # Classe para hotéis bandeira Royal
     def Royal(self, nome, func, email, telefone):
         # dados
-        self.nome = nome
-        self.func = func
-        self.email = email
-        self.tele = telefone
-        self.dados = [self.nome, self.func, self.email, self.tele]
-
-        # formato geral do dado
-        self.FonteNome = ImageFont.truetype("Poppins-Regular", 15)
-        self.FonteFunc = ImageFont.truetype("Poppins-LightItalic", 13)
-        self.FonteEmail = ImageFont.truetype("Poppins-ExtraLightItalic", 13)
-        self.FonteTele = ImageFont.truetype("Poppins-MediumItalic", 12)
-        self.fontes = [self.FonteNome, self.FonteFunc, self.FonteEmail, self.FonteTele]
-
+        self.iniciar(nome, func, None, None, email, telefone, None, None)
         # formato RGB
         self.cor = (20, 50, 45)
-        # Tupla de coordenada X, Y de cada um dos atributos da classe
-        self.coordenada = [(180, 15), (180, 34), (180, 65), (180, 82)]
+        # formato geral do dado
+        self.dados.append(dado_imagem(self.nome, self.formatoFonte("Poppins-Regular", 15), self.cor, (180, 15)))
+        self.dados.append(dado_imagem(self.func, self.formatoFonte("Poppins-LightItalic", 13), self.cor, (180, 34)))
+        self.dados.append(dado_imagem(self.email, self.formatoFonte("Poppins-ExtraLightItalic", 13), self.cor, (180, 65)))
+        self.dados.append(dado_imagem(self.telefone, self.formatoFonte("Poppins-MediumItalic", 12), self.cor, (180, 82)))
 
     # Classe para hotéis bandeira TulipInn
     def TulipInn(self, nome, func, email, telefone):
         # dados
-        self.nome = nome
-        self.func = func
-        self.email = email
-        self.tele = telefone
-        self.dados = [self.nome, self.func, self.email, self.tele]
-
-        # formato geral do dado
-        self.FonteNome = ImageFont.truetype("overpass-bold", 14)
-        self.FonteFunc = ImageFont.truetype("overpass-regular", 12)
-        self.FonteEmail = ImageFont.truetype("overpass-regular", 12)
-        self.FonteTele = ImageFont.truetype("overpass-regular", 12)
-        self.fontes = [self.FonteNome, self.FonteFunc, self.FonteEmail, self.FonteTele]
-
+        self.iniciar(nome, func, None, None, email, telefone, None, None)
         # formato RGB
         self.cor = (0, 0, 0)
-        # Tupla de coordenada X, Y de cada um dos atributos da classe
-        self.coordenada = [(180, 15), (180, 34), (180, 65), (180, 82)]
+        # formato geral do dado
+        self.dados.append(dado_imagem(self.nome, self.formatoFonte("overpass-bold", 14), self.cor, (180, 15)))
+        self.dados.append(dado_imagem(self.func, self.formatoFonte("overpass-regular", 12), self.cor, (180, 34)))
+        self.dados.append(dado_imagem(self.email, self.formatoFonte("overpass-regular", 12), self.cor, (180, 65)))
+        self.dados.append(dado_imagem(self.telefone, self.formatoFonte("overpass-regular", 12), self.cor, (180, 82)))
 
     # Classe para hotéis bandeira SoftInn
-    def SoftInn(self, nome, func, funcIng, email, telefone, ender, cidade):
+    def SoftInn(self, nome, func, funcING, email, telefone, ender, cidade):
         # dados
-        self.nome = nome
-        self.func = func
-        self.funcing = funcIng
-        self.email = email
-        self.tele = telefone
-        self.ender = ender
-        self.cidade = cidade
-        self.dados = [self.nome, self.func, self.funcing, self.email, self.tele, self.ender, self.cidade]
-
-        # formato geral do dado
-        self.FonteNome = ImageFont.truetype("CoText_Std", 16)
-        self.FonteFuncao = ImageFont.truetype("CoText_Std_Lt", 12)
-        self.FonteFuncaoIngles = ImageFont.truetype("CoText_Std_Lt", 10)
-        self.FonteEmail = ImageFont.truetype("CoText_Std_Lt", 12)
-        self.FonteTelefone = ImageFont.truetype("CoText_Std_Lt", 12)
-        self.FonteRua = ImageFont.truetype("CoText_Std_Lt", 12)
-        self.FonteCidade = ImageFont.truetype("CoText_Std_Lt", 12)
-        self.fontes = [self.FonteNome, self.FonteFuncao, self.FonteFuncaoIngles, self.FonteEmail,
-                       self.FonteTelefone, self.FonteRua, self.FonteCidade]
-
+        self.iniciar(nome, func, funcING, None, email, telefone, ender, cidade)
         # formato RGB
         self.cor = (255, 255, 255)
-        # Tupla de coordenada X, Y de cada um dos atributos da classe
-        self.coordenada = [(34, 8), (34, 27), (34, 41), (34, 59), (34, 80), (34, 110), (34, 121)]
+        # formato geral do dado
+        self.dados.append(dado_imagem(self.nome, self.formatoFonte("CoText_Std", 16), self.cor, (34, 8)))
+        self.dados.append(dado_imagem(self.func, self.formatoFonte("CoText_Std_Lt", 12), self.cor, (34, 27)))
+        self.dados.append(dado_imagem(self.funcING, self.formatoFonte("CoText_Std_Lt", 10), self.cor, (34, 41)))
+        self.dados.append(dado_imagem(self.email, self.formatoFonte("CoText_Std_Lt", 12), self.cor, (34, 59)))
+        self.dados.append(dado_imagem(self.telefone, self.formatoFonte("CoText_Std_Lt", 12), self.cor, (34, 80)))
+        self.dados.append(dado_imagem(self.ender, self.formatoFonte("CoText_Std_Lt", 12), self.cor, (34, 110)))
+        self.dados.append(dado_imagem(self.cidade, self.formatoFonte("CoText_Std_Lt", 12), self.cor, (34, 121)))
 
     # função que imprime na imagem os dados desejados.
     def desenho(self, work):
         imagem = ImageDraw.Draw(work)
-        for indice in range(0, len(self.fontes)):
-            imagem.text(self.coordenada[indice], self.dados[indice], self.cor, self.fontes[indice])
+        for indice in range(0, len(self.dados)):
+            imagem.text(self.dados[indice].coordenada, self.dados[indice].texto, self.dados[indice].cor,
+                        self.dados[indice].fonteNome)
+        self.dados.clear()
 
 
 # Função p/ colher dados e distinguir qual fluxo o programa seguirá (bandeira do hotel)
@@ -150,15 +152,14 @@ def Criar_assinatura(work):
     telefone = str('Fone: ' + input('Telefone: '))
     hotel = bandeira_hoteis()
 
-    # Bandeira Golden, seus dados
     if 'GOLDEN' in bandeira:
         funcIng = str(input('Função em inglês: '))
         nomeHotel = str(input('Nome do hotel: '))
         ender = str(input('Endereço: '))
-
+        cidade = str(input('Cidade: '))
         try:
-            # Instancia classe do hotel
-            hotel.Golden(nome, func, funcIng, nomeHotel, ender, email, telefone)
+            # Instancia classe do hote
+            hotel.Golden(nome, func, funcIng, nomeHotel, ender, cidade, email, telefone)
         except OSError:
             print('Fonte não encontrada, instale as fontes')
             time.sleep(2)
@@ -214,7 +215,7 @@ def personalizado(work):
         quit()
     except OSError:
         print('Fonte não encontrada, digite uma fonte válida')
-        quit()
+        return personalizado()
 
     dado_personalizado = ImageDraw.Draw(work)
     dado_personalizado.text((coordenada), mensagem, (cor), letra)
@@ -266,16 +267,20 @@ def Imagem():
 # Programa principal
 def main():
     # Insere diretório da imagem em branco
-    try:
-        while True:
+    while True:
+        try:
             # Muda a aplicação para o diretório passado e inicia as funções de edição
             os.chdir(input('Pasta da imagem(ex: C:\PJA\Origem): '))
+            #os.chdir(os.getcwd())
             Imagem()
 
-    # Caso seja passado qualquer dado que não seja uma pasta, a aplicação reiniciará
-    except FileNotFoundError:
-        print('Pasta inserida não encontrada, insira um caminho existente')
-        main()
+        # Caso seja passado qualquer dado que não seja uma pasta, a aplicação reiniciará
+        except FileNotFoundError:
+            print('Pasta inserida não encontrada, insira um caminho existente')
+            main()
+        except WindowsError:
+            print('Pasta inserida não encontrada, insira um caminho existente')
+            main()
 
 
 # Instancia programa principal
